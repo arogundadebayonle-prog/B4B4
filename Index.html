@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>B4B4 MOTO RUSH</title>
+<style>
+body{margin:0;background:#111;color:white;font-family:Arial;text-align:center}
+h1{color:#ffcc00;margin:5px}
+#game{background:#333;border:3px solid #ffcc00;display:block;margin:auto}
+button{background:#ffcc00;padding:15px 30px;font-size:20px;border:none;border-radius:10px;font-weight:bold}
+</style>
+</head>
+<body>
+<h1>🏍️ B4B4 MOTO RUSH</h1>
+<p>Score: <span id="score">0</span> | Distance: <span id="dist">0</span>m</p>
+<canvas id="game" width="360" height="450"></canvas>
+<p>Tap LEFT / RIGHT side to switch lane! Dodge Danfo, Bus, Goat!</p>
+<button onclick="startGame()">START RUSH</button>
+<script>
+let c=document.getElementById("game"),ctx=c.getContext("2d");
+let lane=1,obs=[],score=0,dist=0,playing=false;
+let lanes=[70,180,290];
+function startGame(){lane=1;obs=[];score=0;dist=0;playing=true;}
+c.addEventListener("touchstart",e=>{let x=e.touches[0].clientX;let r=c.getBoundingClientRect();let cx=x-r.left; if(cx<180&&lane>0)lane--; if(cx>=180&&lane<2)lane++;});
+document.addEventListener("keydown",e=>{if(e.key=="ArrowLeft"&&lane>0)lane--; if(e.key=="ArrowRight"&&lane<2)lane++;});
+setInterval(()=>{
+ctx.fillStyle="#333";ctx.fillRect(0,0,360,450);
+ctx.fillStyle="white";ctx.fillRect(115,0,5,450);ctx.fillRect(235,0,5,450);
+if(!playing){ctx.fillStyle="white";ctx.font="20px Arial";ctx.fillText("Tap START to Rush!",80,220);return;}
+if(Math.random()<0.03){let types=["🚕 DANFO","🚌 BUS","🐐 GOAT"];let t=types[Math.floor(Math.random()*3)];obs.push({x:lanes[Math.floor(Math.random()*3)],y:-60,type:t});}
+for(let i=obs.length-1;i>=0;i--){let o=obs[i];o.y+=6;ctx.font="30px Arial";ctx.fillText(o.type.includes("GOAT")?"🐐":o.type.includes("BUS")?"🚌":"🚕",o.x-20,o.y);ctx.font="12px Arial";ctx.fillText(o.type,o.x-25,o.y+20);if(Math.abs(o.x-lanes[lane])<40&&Math.abs(o.y-380)<50){playing=false;alert("CRASH! Danfo catch you! Score: "+score);}}
+if(o.y>500)obs.splice(i,1);}
+ctx.font="40px Arial";ctx.fillText("🏍️",lanes[lane]-20,400);
+score++;dist++;if(score%10==0){document.getElementById("score").innerText=score;document.getElementById("dist").innerText=dist;}
+},30);
+</script>
+</body>
+  </html>
